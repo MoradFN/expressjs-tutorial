@@ -2,7 +2,14 @@
 //https://www.youtube.com/watch?v=nH9E25nkk3I&list=WL&index=11&t=40s
 
 import express, { request, response } from "express";
-import { query, validationResult, body, matchedData } from "express-validator";
+import {
+  query,
+  validationResult,
+  body,
+  matchedData,
+  checkSchema,
+} from "express-validator";
+import { createUserValidationSchema } from "./utils/validationSchemas.mjs";
 
 const app = express();
 app.use(express.json());
@@ -54,7 +61,7 @@ app.get("/", (request, response) => {
 });
 
 //localhost:3000/api/users?filter=dfhggfdfg
-http: app.get(
+app.get(
   "/api/users",
   query("filter")
     .isString()
@@ -82,20 +89,10 @@ http: app.get(
 // ############################## POST / CREATE USER############################
 app.post(
   "/api/users",
-  //VALIDATION
-  [
-    body("username")
-      .notEmpty()
-      .withMessage("username must not be empty")
-      .isLength({ min: 5, max: 32 })
-      .withMessage("username must be between 5 and 32 characters")
-      .isString()
-      .withMessage("username must be a string"),
-    body("displayName").notEmpty().withMessage("displayName must not be empty"),
-  ],
+  // #### Schema Validation ####
+  checkSchema(createUserValidationSchema),
   (request, response) => {
     const result = validationResult(request);
-    // console.log(request.body);
     console.log(result);
 
     if (!result.isEmpty())
