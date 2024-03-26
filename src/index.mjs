@@ -1,4 +1,4 @@
-///VAlidation
+///Routes
 //https://www.youtube.com/watch?v=nH9E25nkk3I&list=WL&index=11&t=40s
 
 import express, { request, response } from "express";
