@@ -9,7 +9,10 @@ import {
   matchedData,
   checkSchema,
 } from "express-validator";
-import { createUserValidationSchema } from "./utils/validationSchemas.mjs";
+import {
+  createUserValidationSchema,
+  getUsersValidationSchema,
+} from "./utils/validationSchemas.mjs";
 
 const app = express();
 app.use(express.json());
@@ -61,22 +64,22 @@ app.get("/", (request, response) => {
 });
 
 //localhost:3000/api/users?filter=dfhggfdfg
+//Validera sen.
 app.get(
   "/api/users",
-  query("filter")
-    .isString()
-    .withMessage("filter must be a string")
-    .notEmpty()
-    .withMessage("filter must not be empty")
-    .isLength({ min: 3, max: 10 })
-    .withMessage("filter must be between 3 and 10 characters"),
+  checkSchema(getUsersValidationSchema),
+  query("filter"),
   (request, response) => {
     const result = validationResult(request);
+    if (!result.isEmpty()) {
+      return response.status(400).json({ errors: result.array() });
+    }
     console.log(result);
     const {
       query: { filter, value },
     } = request;
     //2. when defined -> http://localhost:3000/api/users?filter=username&value=mo
+    //3. when defined -> http://localhost:3000/api/users?filter=displayName&value=mo
     if (filter && value)
       return response.send(
         mockUsers.filter((user) => user[filter].includes(value))
