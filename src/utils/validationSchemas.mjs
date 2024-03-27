@@ -1,3 +1,9 @@
+// POST http://localhost:3000/api/users
+// {
+//   "username": "sss",
+//   "displayName": "sadasd"
+// }
+
 export const createUserValidationSchema = {
   username: {
     isLength: {
@@ -17,27 +23,35 @@ export const createUserValidationSchema = {
     },
   },
 };
-
+// ############## GET / READ USER ############################
+// GET
+//localhost:3000/api/users
+// http://localhost:3000/api/users?filter=username&value=mor
+//localhost:3000/api/users?filter=displayName&value=dra
 export const getUsersValidationSchema = {
   filter: {
-    notEmpty: {
-      errorMessage: "filter must not be empty!",
+    optional: true,
+    custom: {
+      options: (value, { req }) => (value && req.query.value ? true : false),
+      errorMessage: "filter and value must be provided!",
     },
     isIn: {
       options: [["username", "displayName"]],
-      errorMessage: "filter must be 'username' or 'displayName'",
+      errorMessage: "filter must be 'username' or 'displayName",
     },
   },
   value: {
-    notEmpty: {
-      errorMessage: "No provided value",
+    optional: true,
+    custom: {
+      options: (value, { req }) => (value && req.query.filter ? true : false),
+      errorMessage: "filter and value must be provided!",
     },
     isString: {
       errorMessage: "value must be a string!",
     },
     isLength: {
       options: { min: 3, max: 32 },
-      errorMessage: "value must be between 3 and 32 characters!",
+      errorMessage: "value must be between 1 and 32 characters!",
     },
   },
 };
