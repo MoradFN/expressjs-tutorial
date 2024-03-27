@@ -33,25 +33,53 @@ export const getUsersValidationSchema = {
     optional: true,
     custom: {
       options: (value, { req }) => (value && req.query.value ? true : false),
-      errorMessage: "filter and value must be provided!",
+      errorMessage: [
+        "no value provided after filter",
+        "examples below:",
+        "/api/users?filter=username&value=mor",
+        "/api/users?filter=displayName&value=dra",
+        "redirect back to all users below:",
+        "/api/users",
+      ],
     },
     isIn: {
       options: [["username", "displayName"]],
-      errorMessage: "filter must be 'username' or 'displayName",
+      errorMessage: [
+        "filter must contain either 'username' or 'displayName!",
+        "examples below:",
+        "/api/users?filter=username&value=mor",
+        "/api/users?filter=displayName&value=dra",
+        "redirect back to all users below:",
+        "/api/users",
+      ],
     },
   },
   value: {
     optional: true,
     custom: {
       options: (value, { req }) => (value && req.query.filter ? true : false),
-      errorMessage: "filter and value must be provided!",
+      errorMessage: [
+        "no filter provided before value!",
+        "examples below:",
+        "/api/users?filter=username&value=mor",
+        "/api/users?filter=displayName&value=dra",
+        "redirect back to all users below:",
+        "/api/users",
+      ],
     },
     isString: {
       errorMessage: "value must be a string!",
     },
     isLength: {
       options: { min: 3, max: 32 },
-      errorMessage: "value must be between 1 and 32 characters!",
+      errorMessage: [
+        "value must be between 3 and 32 characters!",
+        "examples below:",
+        "/api/users?filter=username&value=mor",
+        "/api/users?filter=displayName&value=dra",
+        "redirect back to all users below:",
+        "/api/users",
+      ],
     },
   },
 };
